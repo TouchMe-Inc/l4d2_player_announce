@@ -1,0 +1,28 @@
+"Phrases"
+{
+	PLAYER_CONNECTED
+	{
+		"#format"		"{1:s},{2:s},{3:s},{4:.1f},{5:.1f}"
+		"en"			"Player {olive}{1}{default} connected {olive}·{default} {2}, {3} {olive}·{default} Lerp: {4} {olive}·{default} Hours: {5}"
+	}
+
+	"LAN_COUNTRY"
+	{
+		"en"			"Local"
+	}
+
+	"LAN_CITY"
+	{
+		"en"			"Hidden"
+	}
+
+	"UNKNOWN_COUNTRY"
+	{
+		"en"			"Unknown"
+	}
+
+	"UNKNOWN_CITY"
+	{
+		"en"			"Unknown"
+	}
+}
