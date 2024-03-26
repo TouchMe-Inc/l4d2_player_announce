@@ -8,11 +8,11 @@
 
 
 public Plugin myinfo = {
-	name = "PlayerAnnonce",
+	name = "PlayerAnnounce",
 	author = "TouchMe",
 	description = "Displays information about connecting/disconnecting players",
 	version = "build_0002",
-	url = "https://github.com/TouchMe-Inc/l4d2_player_annonce"
+	url = "https://github.com/TouchMe-Inc/l4d2_player_announce"
 };
 
 
