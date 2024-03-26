@@ -1,9 +1,21 @@
 "Phrases"
 {
-	PLAYER_CONNECTED
+	"PLAYER_CONNECTED"
 	{
-		"#format"		"{1:s},{2:s},{3:s},{4:.1f},{5:.1f}"
-		"en"			"Player {olive}{1}{default} connected {olive}·{default} {2}, {3} {olive}·{default} Lerp: {4} {olive}·{default} Hours: {5}"
+		"#format"		"{1:s},{2:s},{3:s},{4:.1f}"
+		"en"			"Player {olive}{1}{default} connected {olive}·{default} {2}, {3} {olive}· Hours: {4}"
+	}
+
+	"PLAYER_DISCONNECTED"
+	{
+		"#format"		"{1:s}"
+		"en"			"Player {olive}{1}{default} disconnected"
+	}
+
+	"PLAYER_DISCONNECTED_WITH_REASON"
+	{
+		"#format"		"{1:s},{2:s}"
+		"en"			"Player {olive}{1}{default} disconnected. Reason: {2}"
 	}
 
 	"LAN_COUNTRY"

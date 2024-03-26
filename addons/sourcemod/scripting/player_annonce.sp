@@ -10,8 +10,8 @@
 public Plugin myinfo = {
 	name = "PlayerAnnonce",
 	author = "TouchMe",
-	description = "Plugin displays information about players (Country, lerp, hours)",
-	version = "build_0001",
+	description = "Displays information about connecting/disconnecting players",
+	version = "build_0002",
 	url = "https://github.com/TouchMe-Inc/l4d2_player_annonce"
 };
 
@@ -19,13 +19,6 @@ public Plugin myinfo = {
 #define TRANSLATIONS            "player_annonce.phrases"
 #define APP_L4D2                550
 
-
-ConVar
-	g_cvMinUpdateRate = null,
-	g_cvMaxUpdateRate = null,
-	g_cvMinInterpRatio = null,
-	g_cvMaxInterpRatio = null
-;
 
 /**
   * Called before OnPluginStart.
@@ -45,10 +38,7 @@ public void OnPluginStart()
 {
 	LoadTranslations(TRANSLATIONS);
 
-	g_cvMinUpdateRate = FindConVar("sv_minupdaterate");
-	g_cvMaxUpdateRate = FindConVar("sv_maxupdaterate");
-	g_cvMinInterpRatio = FindConVar("sv_client_min_interp_ratio");
-	g_cvMaxInterpRatio = FindConVar("sv_client_max_interp_ratio");
+	HookEvent("player_disconnect", Event_PlayerDisconnect, EventHookMode_Pre);
 }
 
 public void SteamWorks_OnValidateClient(int iOwnAuthId, int iAuthId)
@@ -68,12 +58,12 @@ public void OnClientPostAdminCheck(int iClient)
 
 	SteamWorks_RequestStats(iClient, APP_L4D2);
 
-	char sIp[16], sName[32], sCountry[32], sCity[32];
+	char sIp[16], sName[MAX_NAME_LENGTH], sCountry[32], sCity[32];
 
-	FormatEx(sName, sizeof(sName), "%N", iClient);
+	GetClientNameFixed(iClient, sName, sizeof(sName), 18);
 	GetClientIP(iClient, sIp, sizeof(sIp));
+
 	int iPlayedTime = 0;
-	float fLerpTime = GetLerpTime(iClient) * 1000;
 
 	if (SteamWorks_IsConnected()) {
 		SteamWorks_GetStatCell(iClient, "Stat.TotalPlayTime.Total", iPlayedTime);
@@ -95,45 +85,43 @@ public void OnClientPostAdminCheck(int iClient)
 		}
 	}
 
-	CPrintToChatAll("%t", "PLAYER_CONNECTED", sName, sCountry, sCity, fLerpTime, SecToHours(iPlayedTime));
+	CPrintToChatAll("%t", "PLAYER_CONNECTED", sName, sCountry, sCity, SecToHours(iPlayedTime));
 }
 
-float GetLerpTime(int iClient)
+void Event_PlayerDisconnect(Event event, const char[] sName, bool bDontBroadcast)
 {
-	char buffer[32];
-	float fLerpRatio, fLerpAmount, fUpdateRate;
+	event.BroadcastDisabled = true;
 
-	if (GetClientInfo(iClient, "cl_interp_ratio", buffer, sizeof(buffer))) {
-		fLerpRatio = StringToFloat(buffer);
+	int iClient = GetClientOfUserId(GetEventInt(event, "userid"));
+
+	if (!iClient || IsFakeClient(iClient)) {
+		return;
 	}
 
-	if (g_cvMinInterpRatio != null && g_cvMaxInterpRatio != null && GetConVarFloat(g_cvMinInterpRatio) != -1.0) {
-		fLerpRatio = clamp(fLerpRatio, GetConVarFloat(g_cvMinInterpRatio), GetConVarFloat(g_cvMaxInterpRatio));
+	char sClientName[MAX_NAME_LENGTH];
+	GetClientNameFixed(iClient, sClientName, sizeof(sClientName), 18);
+
+	char sReason[128];
+	GetEventString(event, "reason", sReason, sizeof(sReason));
+
+	if (strcmp(sReason, "Disconnect by user.") == 0) {
+		CPrintToChatAll("%t", "PLAYER_DISCONNECTED", sClientName);
+	} else {
+		CPrintToChatAll("%t", "PLAYER_DISCONNECTED_WITH_REASON", sClientName, sReason);
 	}
-
-	if (GetClientInfo(iClient, "cl_interp", buffer, sizeof(buffer))) {
-		fLerpAmount = StringToFloat(buffer);
-	}
-
-	if (GetClientInfo(iClient, "cl_updaterate", buffer, sizeof(buffer))) {
-		fUpdateRate = StringToFloat(buffer);
-	}
-
-	fUpdateRate = clamp(fUpdateRate, GetConVarFloat(g_cvMinUpdateRate), GetConVarFloat(g_cvMaxUpdateRate));
-
-	return max(fLerpAmount, fLerpRatio / fUpdateRate);
 }
 
 bool IsLanIP(char src[16])
 {
 	char ip4[4][4];
-	int ipnum;
 
 	if (ExplodeString(src, ".", ip4, 4, 4) == 4)
 	{
-		ipnum = StringToInt(ip4[0]) * 65536 + StringToInt(ip4[1]) * 256 + StringToInt(ip4[2]);
+		int ipnum = StringToInt(ip4[0]) * 65536 + StringToInt(ip4[1]) * 256 + StringToInt(ip4[2]);
 
-		if((ipnum >= 655360 && ipnum < 655360+65535) || (ipnum >= 11276288 && ipnum < 11276288+4095) || (ipnum >= 12625920 && ipnum < 12625920+255))
+		if((ipnum >= 655360 && ipnum < 655360+65535)
+		|| (ipnum >= 11276288 && ipnum < 11276288+4095)
+		|| (ipnum >= 12625920 && ipnum < 12625920+255))
 		{
 			return true;
 		}
@@ -164,10 +152,16 @@ float SecToHours(int iSeconds) {
 	return float(iSeconds) / 3600.0;
 }
 
-float max(float a, float b) {
-	return (a > b) ? a : b;
-}
+/**
+ *
+ */
+void GetClientNameFixed(int iClient, char[] name, int length, int iMaxSize)
+{
+	GetClientName(iClient, name, length);
 
-float clamp(float inc, float low, float high) {
-	return (inc > high) ? high : ((inc < low) ? low : inc);
+	if (strlen(name) > iMaxSize)
+	{
+		name[iMaxSize - 3] = name[iMaxSize - 2] = name[iMaxSize - 1] = '.';
+		name[iMaxSize] = '\0';
+	}
 }

@@ -1,0 +1,40 @@
+"Phrases"
+{
+	"PLAYER_CONNECTED"
+	{
+		"#format"		"{1:s},{2:s},{3:s},{4:.1f}"
+		"ru"			"Игрок {olive}{1}{default} подключился {olive}·{default} {2}, {3} {olive}· Hours: {4}"
+	}
+
+	"PLAYER_DISCONNECTED"
+	{
+		"#format"		"{1:s}"
+		"ru"			"Игрок {olive}{1}{default} отключился"
+	}
+
+	"PLAYER_DISCONNECTED_WITH_REASON"
+	{
+		"#format"		"{1:s},{2:s}"
+		"ru"			"Игрок {olive}{1}{default} отключился. Причина: {2}"
+	}
+
+	"LAN_COUNTRY"
+	{
+		"ru"			"Local"
+	}
+
+	"LAN_CITY"
+	{
+		"ru"			"Hidden"
+	}
+
+	"UNKNOWN_COUNTRY"
+	{
+		"ru"			"Unknown"
+	}
+
+	"UNKNOWN_CITY"
+	{
+		"ru"			"Unknown"
+	}
+}
