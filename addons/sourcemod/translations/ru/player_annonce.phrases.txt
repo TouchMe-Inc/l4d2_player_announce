@@ -3,7 +3,7 @@
 	"PLAYER_CONNECTED"
 	{
 		"#format"		"{1:s},{2:s},{3:s},{4:.1f}"
-		"ru"			"Игрок {olive}{1}{default} подключился {olive}·{default} {2}, {3} {olive}· Hours: {4}"
+		"ru"			"Игрок {olive}{1}{default} подключился {olive}·{default} {2}, {3} {olive}·{default} Hours: {4}"
 	}
 
 	"PLAYER_DISCONNECTED"
