@@ -16,7 +16,7 @@ public Plugin myinfo = {
 };
 
 
-#define TRANSLATIONS            "player_annonce.phrases"
+#define TRANSLATIONS            "player_announce.phrases"
 #define APP_L4D2                550
 
 
