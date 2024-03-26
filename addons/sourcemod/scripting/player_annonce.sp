@@ -90,7 +90,7 @@ public void OnClientPostAdminCheck(int iClient)
 
 void Event_PlayerDisconnect(Event event, const char[] sName, bool bDontBroadcast)
 {
-	event.BroadcastDisabled = true;
+	SetEventBroadcast(event, true);
 
 	int iClient = GetClientOfUserId(GetEventInt(event, "userid"));
 
