@@ -1,5 +1,11 @@
 "Phrases"
 {
+	"PLAYER_CONNECTING"
+	{
+		"#format"		"{1:s}"
+		"ru"			"Игрок {olive}{1}{default} подключается"
+	}
+
 	"PLAYER_CONNECTED"
 	{
 		"#format"		"{1:s},{2:s},{3:s},{4:.1f}"
@@ -15,7 +21,7 @@
 	"PLAYER_DISCONNECTED_WITH_REASON"
 	{
 		"#format"		"{1:s},{2:s}"
-		"ru"			"Игрок {olive}{1}{default} отключился. Причина: {2}"
+		"ru"			"Игрок {olive}{1}{default} отключился. Причина: \"{2}\""
 	}
 
 	"LAN_COUNTRY"
