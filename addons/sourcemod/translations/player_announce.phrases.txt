@@ -1,5 +1,11 @@
 "Phrases"
 {
+	"PLAYER_CONNECTING"
+	{
+		"#format"		"{1:s}"
+		"en"			"Player {olive}{1}{default} connecting"
+	}
+
 	"PLAYER_CONNECTED"
 	{
 		"#format"		"{1:s},{2:s},{3:s},{4:.1f}"
@@ -15,7 +21,7 @@
 	"PLAYER_DISCONNECTED_WITH_REASON"
 	{
 		"#format"		"{1:s},{2:s}"
-		"en"			"Player {olive}{1}{default} disconnected. Reason: {2}"
+		"en"			"Player {olive}{1}{default} disconnected. Reason: \"{2}\""
 	}
 
 	"LAN_COUNTRY"
