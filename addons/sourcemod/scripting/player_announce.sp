@@ -41,13 +41,26 @@ public void OnPluginStart()
 	HookEvent("player_disconnect", Event_PlayerDisconnect, EventHookMode_Pre);
 }
 
-public void SteamWorks_OnValidateClient(int iOwnAuthId, int iAuthId)
+public void OnClientAuthorized(int iClient, const char[] sAuthId)
 {
-	int iClient = GetClientFromSteamID(iAuthId);
-
-	if (iClient > 0) {
-		SteamWorks_RequestStats(iClient, APP_L4D2);
+	if (sAuthId[0] == 'B' || sAuthId[9] == 'L') {
+		return;
 	}
+
+	SteamWorks_RequestStats(iClient, APP_L4D2);
+}
+
+public void OnClientConnected(int iClient)
+{
+	if (IsFakeClient(iClient)) {
+		return;
+	}
+
+	char sName[MAX_NAME_LENGTH];
+
+	GetClientNameFixed(iClient, sName, sizeof(sName), 18);
+
+	CPrintToChatAll("%t", "PLAYER_CONNECTING", sName);
 }
 
 public void OnClientPostAdminCheck(int iClient)
@@ -56,18 +69,10 @@ public void OnClientPostAdminCheck(int iClient)
 		return;
 	}
 
-	SteamWorks_RequestStats(iClient, APP_L4D2);
-
 	char sIp[16], sName[MAX_NAME_LENGTH], sCountry[32], sCity[32];
 
 	GetClientNameFixed(iClient, sName, sizeof(sName), 18);
 	GetClientIP(iClient, sIp, sizeof(sIp));
-
-	int iPlayedTime = 0;
-
-	if (SteamWorks_IsConnected()) {
-		SteamWorks_GetStatCell(iClient, "Stat.TotalPlayTime.Total", iPlayedTime);
-	}
 
 	if (IsLanIP(sIp))
 	{
@@ -85,7 +90,7 @@ public void OnClientPostAdminCheck(int iClient)
 		}
 	}
 
-	CPrintToChatAll("%t", "PLAYER_CONNECTED", sName, sCountry, sCity, SecToHours(iPlayedTime));
+	CPrintToChatAll("%t", "PLAYER_CONNECTED", sName, sCountry, sCity, GetClientHours(iClient));
 }
 
 void Event_PlayerDisconnect(Event event, const char[] sName, bool bDontBroadcast)
@@ -130,26 +135,15 @@ bool IsLanIP(char src[16])
 	return false;
 }
 
-int GetClientFromSteamID(int iAuthId)
+float GetClientHours(int iClient)
 {
-	for (int iClient = 1; iClient <= MaxClients; iClient ++)
-	{
-		if (!IsClientConnected(iClient)) {
-			continue;
-		}
+	int iPlayedTime = 0;
 
-		int iSteamAccountId = GetSteamAccountID(iClient);
-
-		if (iSteamAccountId && iSteamAccountId == iAuthId) {
-			return iClient;
-		}
+	if (!SteamWorks_GetStatCell(iClient, "Stat.TotalPlayTime.Total", iPlayedTime)) {
+		return 0.0;
 	}
 
-	return 0;
-}
-
-float SecToHours(int iSeconds) {
-	return float(iSeconds) / 3600.0;
+	return float(iPlayedTime) / 3600.0;
 }
 
 /**
