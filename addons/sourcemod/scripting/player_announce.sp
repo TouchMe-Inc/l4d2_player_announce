@@ -93,34 +93,34 @@ public void OnClientPostAdminCheck(int iClient)
 	CPrintToChatAll("%t", "PLAYER_CONNECTED", sName, sCountry, sCity, GetClientHours(iClient));
 }
 
-void Event_PlayerDisconnect(Event event, const char[] sName, bool bDontBroadcast)
+void Event_PlayerDisconnect(Event event, const char[] sEventName, bool bDontBroadcast)
 {
-	SetEventBroadcast(event, true);
-
 	int iClient = GetClientOfUserId(GetEventInt(event, "userid"));
 
 	if (!iClient || IsFakeClient(iClient)) {
 		return;
 	}
 
-	char sClientName[MAX_NAME_LENGTH];
-	GetClientNameFixed(iClient, sClientName, sizeof(sClientName), 18);
+	SetEventBroadcast(event, true);
+
+	char sName[MAX_NAME_LENGTH];
+	GetClientNameFixed(iClient, sName, sizeof(sName), 18);
 
 	char sReason[128];
 	GetEventString(event, "reason", sReason, sizeof(sReason));
 
 	if (strcmp(sReason, "Disconnect by user.") == 0) {
-		CPrintToChatAll("%t", "PLAYER_DISCONNECTED", sClientName);
+		CPrintToChatAll("%t", "PLAYER_DISCONNECTED", sName);
 	} else {
-		CPrintToChatAll("%t", "PLAYER_DISCONNECTED_WITH_REASON", sClientName, sReason);
+		CPrintToChatAll("%t", "PLAYER_DISCONNECTED_WITH_REASON", sName, sReason);
 	}
 }
 
-bool IsLanIP(char src[16])
+bool IsLanIP(char ip[16])
 {
 	char ip4[4][4];
 
-	if (ExplodeString(src, ".", ip4, 4, 4) == 4)
+	if (ExplodeString(ip, ".", ip4, 4, 4) == 4)
 	{
 		int ipnum = StringToInt(ip4[0]) * 65536 + StringToInt(ip4[1]) * 256 + StringToInt(ip4[2]);
 
@@ -135,6 +135,9 @@ bool IsLanIP(char src[16])
 	return false;
 }
 
+/**
+ * Returns the hours played by the player from steam statistics.
+ */
 float GetClientHours(int iClient)
 {
 	int iPlayedTime = 0;
