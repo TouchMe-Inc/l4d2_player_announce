@@ -8,30 +8,25 @@
 
 	"PLAYER_CONNECTED"
 	{
-		"#format"		"{1:s},{2:s},{3:s},{4:.1f}"
-		"ru"			"Игрок {olive}{1}{default} подключился {olive}·{default} {2}, {3} {olive}·{default} Hours: {4}"
+		"#format"		"{1:s}{2:s},{3:s},{4:d}"
+		"ru"			"Игрок {1}{2}{default} подключился {olive}·{default} {3} {olive}·{default} Hours: {4}"
 	}
 
 	"PLAYER_DISCONNECTED"
 	{
-		"#format"		"{1:s}"
-		"ru"			"Игрок {olive}{1}{default} отключился"
+		"#format"		"{1:s},{2:s}"
+		"ru"			"Игрок {1}{2}{default} отключился"
 	}
 
 	"PLAYER_DISCONNECTED_WITH_REASON"
 	{
-		"#format"		"{1:s},{2:s}"
-		"ru"			"Игрок {olive}{1}{default} отключился. Причина: \"{2}\""
+		"#format"		"{1:s},{2:s},{3:s}"
+		"ru"			"Игрок {1}{2}{default} отключился. Причина: \"{3}\""
 	}
 
-	"LAN_COUNTRY"
+	"LAN"
 	{
 		"ru"			"Local"
-	}
-
-	"LAN_CITY"
-	{
-		"ru"			"Hidden"
 	}
 
 	"UNKNOWN_COUNTRY"
@@ -39,8 +34,15 @@
 		"ru"			"Unknown"
 	}
 
-	"UNKNOWN_CITY"
+	"ONLY_COUNTRY"
 	{
-		"ru"			"Unknown"
+		"#format"		"{1:s}"
+		"ru"			"{1}"
+	}
+
+	"COUNTRY_AND_CITY"
+	{
+		"#format"		"{1:s},{2:s}"
+		"ru"			"{1}, {2}"
 	}
 }
