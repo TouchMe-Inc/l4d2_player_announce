@@ -84,15 +84,15 @@ public void Event_PlayerTeam(Event event, const char[] sEventName, bool bDontBro
 
     int iClientId = GetEventInt(event, "userid");
 
-    RequestFrame(Frame_ClientInGame, iClientId);
+    CreateTimer(1.0, Timer_ClientInGame, iClientId, TIMER_FLAG_NO_MAPCHANGE);
 }
 
-public void Frame_ClientInGame(int iClientId)
+Action Timer_ClientInGame(Handle hTimer, int iClientId)
 {
     int iClient = GetClientOfUserId(iClientId);
 
     if (iClient <= 0 || IsFakeClient(iClient)) {
-        return;
+        return Plugin_Stop;
     }
 
     int iTeam = GetClientTeam(iClient);
@@ -126,16 +126,9 @@ public void Frame_ClientInGame(int iClientId)
         FormatEx(szGeoData, sizeof(szGeoData), "%T", "LAN", LANG_SERVER);
     }
 
-    int iClientHours = GetClientHours(iClient);
+    CPrintToChatAll("%t", "PLAYER_CONNECTED", g_szTeamColor[iTeam], sName, szGeoData, GetClientHours(iClient));
 
-    for (int iPlayer = 1; iPlayer <= MaxClients; iPlayer ++)
-    {
-        if (!IsClientInGame(iPlayer) || IsFakeClient(iPlayer)) {
-            continue;
-        }
-
-        CPrintToChat(iPlayer, "%T", "PLAYER_CONNECTED", iPlayer, g_szTeamColor[iTeam], sName, szGeoData, iClientHours);
-    }
+    return Plugin_Stop;
 }
 
 void Event_PlayerDisconnect(Event event, const char[] sEventName, bool bDontBroadcast)
