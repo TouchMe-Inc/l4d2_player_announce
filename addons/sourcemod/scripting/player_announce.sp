@@ -11,7 +11,7 @@ public Plugin myinfo = {
     name        = "PlayerAnnounce",
     author      = "TouchMe",
     description = "Displays information about connecting/disconnecting players",
-    version     = "build_0003",
+    version     = "build_0004",
     url         = "https://github.com/TouchMe-Inc/l4d2_player_announce"
 };
 
@@ -47,6 +47,7 @@ public void OnPluginStart()
     LoadTranslations(TRANSLATIONS);
 
     HookEvent("player_disconnect", Event_PlayerDisconnect, EventHookMode_Pre);
+    HookEvent("player_team", Event_PlayerTeam, EventHookMode_Post);
 }
 
 public void OnClientAuthorized(int iClient, const char[] sAuthId)
@@ -71,21 +72,44 @@ public void OnClientConnected(int iClient)
     CPrintToChatAll("%t", "PLAYER_CONNECTING", sName);
 }
 
-public void OnClientPostAdminCheck(int iClient)
+public void Event_PlayerTeam(Event event, const char[] sEventName, bool bDontBroadcast)
 {
-    if (!IsClientInGame(iClient) || IsFakeClient(iClient)) {
+    if (GetEventInt(event, "disconnect")) {
         return;
     }
 
-    char sIp[16], sName[MAX_NAME_LENGTH], sCountry[32], sCity[32], szGeoData[64];
+    if (GetEventInt(event, "oldteam")) {
+        return;
+    }
 
+    int iClientId = GetEventInt(event, "userid");
+
+    RequestFrame(Frame_ClientInGame, iClientId);
+}
+
+public void Frame_ClientInGame(int iClientId)
+{
+    int iClient = GetClientOfUserId(iClientId);
+
+    if (iClient <= 0 || IsFakeClient(iClient)) {
+        return;
+    }
+
+    int iTeam = GetClientTeam(iClient);
+
+    char sName[MAX_NAME_LENGTH];
     GetClientNameFixed(iClient, sName, sizeof(sName), 18);
+
+    char sIp[16];
     GetClientIP(iClient, sIp, sizeof(sIp));
 
+    char szGeoData[64];
     if (!IsLanIP(sIp))
     {
+        char sCountry[32];
         if (GeoipCountryEx(sIp, sCountry, sizeof(sCountry), LANG_SERVER))
         {
+            char sCity[32];
             if (GeoipCity(sIp, sCity, sizeof(sCity), LANG_SERVER)) {
                 FormatEx(szGeoData, sizeof(szGeoData), "%T", "COUNTRY_AND_CITY", LANG_SERVER, sCountry, sCity);
             } else {
@@ -102,7 +126,16 @@ public void OnClientPostAdminCheck(int iClient)
         FormatEx(szGeoData, sizeof(szGeoData), "%T", "LAN", LANG_SERVER);
     }
 
-    CPrintToChatAll("%t", "PLAYER_CONNECTED", g_szTeamColor[GetClientTeam(iClient)], sName, szGeoData, GetClientHours(iClient));
+    int iClientHours = GetClientHours(iClient);
+
+    for (int iPlayer = 1; iPlayer <= MaxClients; iPlayer ++)
+    {
+        if (!IsClientInGame(iPlayer) || IsFakeClient(iPlayer)) {
+            continue;
+        }
+
+        CPrintToChat(iPlayer, "%T", "PLAYER_CONNECTED", iPlayer, g_szTeamColor[iTeam], sName, szGeoData, iClientHours);
+    }
 }
 
 void Event_PlayerDisconnect(Event event, const char[] sEventName, bool bDontBroadcast)
@@ -115,6 +148,8 @@ void Event_PlayerDisconnect(Event event, const char[] sEventName, bool bDontBroa
 
     SetEventBroadcast(event, true);
 
+    int iTeam = GetClientTeam(iClient);
+
     char szClientName[MAX_NAME_LENGTH];
     GetClientNameFixed(iClient, szClientName, sizeof(szClientName), 18);
 
@@ -122,9 +157,9 @@ void Event_PlayerDisconnect(Event event, const char[] sEventName, bool bDontBroa
     GetEventString(event, "reason", szReason, sizeof(szReason));
 
     if (strcmp(szReason, "Disconnect by user.") == 0) {
-        CPrintToChatAll("%t", "PLAYER_DISCONNECTED", g_szTeamColor[GetClientTeam(iClient)], szClientName);
+        CPrintToChatAll("%t", "PLAYER_DISCONNECTED", g_szTeamColor[iTeam], szClientName);
     } else {
-        CPrintToChatAll("%t", "PLAYER_DISCONNECTED_WITH_REASON", g_szTeamColor[GetClientTeam(iClient)], szClientName, szReason);
+        CPrintToChatAll("%t", "PLAYER_DISCONNECTED_WITH_REASON", g_szTeamColor[iTeam], szClientName, szReason);
     }
 }
 
