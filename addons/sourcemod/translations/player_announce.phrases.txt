@@ -8,30 +8,25 @@
 
 	"PLAYER_CONNECTED"
 	{
-		"#format"		"{1:s},{2:s},{3:s},{4:.1f}"
-		"en"			"Player {olive}{1}{default} connected {olive}·{default} {2}, {3} {olive}·{default} Hours: {4}"
+		"#format"		"{1:s}{2:s},{3:s},{4:d}"
+		"en"			"Player {1}{2}{default} connected {olive}·{default} {3} {olive}·{default} Hours: {4}"
 	}
 
 	"PLAYER_DISCONNECTED"
 	{
-		"#format"		"{1:s}"
-		"en"			"Player {olive}{1}{default} disconnected"
+		"#format"		"{1:s},{2:s}"
+		"en"			"Player {1}{2}{default} disconnected"
 	}
 
 	"PLAYER_DISCONNECTED_WITH_REASON"
 	{
-		"#format"		"{1:s},{2:s}"
-		"en"			"Player {olive}{1}{default} disconnected. Reason: \"{2}\""
+		"#format"		"{1:s},{2:s},{3:s}"
+		"en"			"Player {1}{2}{default} disconnected. Reason: \"{3}\""
 	}
 
-	"LAN_COUNTRY"
+	"LAN"
 	{
 		"en"			"Local"
-	}
-
-	"LAN_CITY"
-	{
-		"en"			"Hidden"
 	}
 
 	"UNKNOWN_COUNTRY"
@@ -39,8 +34,15 @@
 		"en"			"Unknown"
 	}
 
-	"UNKNOWN_CITY"
+	"ONLY_COUNTRY"
 	{
-		"en"			"Unknown"
+		"#format"		"{1:s}"
+		"en"			"{1}"
+	}
+
+	"COUNTRY_AND_CITY"
+	{
+		"#format"		"{1:s},{2:s}"
+		"en"			"{1}, {2}"
 	}
 }
