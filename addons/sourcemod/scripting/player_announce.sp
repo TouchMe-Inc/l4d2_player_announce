@@ -91,7 +91,7 @@ Action Timer_ClientInGame(Handle hTimer, int iClientId)
 {
     int iClient = GetClientOfUserId(iClientId);
 
-    if (iClient <= 0 || IsFakeClient(iClient)) {
+    if (iClient <= 0 || !IsClientInGame(iClient) || IsFakeClient(iClient)) {
         return Plugin_Stop;
     }
 
@@ -135,13 +135,13 @@ void Event_PlayerDisconnect(Event event, const char[] sEventName, bool bDontBroa
 {
     int iClient = GetClientOfUserId(GetEventInt(event, "userid"));
 
-    if (!iClient || IsFakeClient(iClient)) {
+    if (iClient <= 0 || IsFakeClient(iClient)) {
         return;
     }
 
     SetEventBroadcast(event, true);
 
-    int iTeam = GetClientTeam(iClient);
+    int iTeam = IsClientInGame(iClient) ? GetClientTeam(iClient) : 0;
 
     char szClientName[MAX_NAME_LENGTH];
     GetClientNameFixed(iClient, szClientName, sizeof(szClientName), 18);
