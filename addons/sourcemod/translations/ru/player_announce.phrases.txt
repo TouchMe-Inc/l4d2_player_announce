@@ -1,48 +1,60 @@
 "Phrases"
 {
-	"PLAYER_CONNECTING"
-	{
-		"#format"		"{1:s}"
-		"ru"			"Игрок {olive}{1}{default} подключается"
-	}
+    "PLAYER_CONNECTING"
+    {
+        "#format"		"{1:s}"
+        "ru"			"Игрок {olive}{1}{default} подключается"
+    }
 
-	"PLAYER_CONNECTED"
-	{
-		"#format"		"{1:s}{2:s},{3:s},{4:d}"
-		"ru"			"Игрок {1}{2}{default} подключился {olive}·{default} {3} {olive}·{default} Hours: {4}"
-	}
+    "PLAYER_CONNECTED"
+    {
+        "#format"		"{1:s}{2:s},{3:s},{4:d}"
+        "ru"			"Игрок {1}{2}{default} подключился {olive}·{default} {3} {olive}·{default} Hours: {4}"
+    }
 
-	"PLAYER_DISCONNECTED"
-	{
-		"#format"		"{1:s},{2:s}"
-		"ru"			"Игрок {1}{2}{default} отключился"
-	}
+    "PLAYER_DISCONNECTED"
+    {
+        "#format"		"{1:s},{2:s}"
+        "ru"			"Игрок {1}{2}{default} отключился"
+    }
 
-	"PLAYER_DISCONNECTED_WITH_REASON"
-	{
-		"#format"		"{1:s},{2:s},{3:s}"
-		"ru"			"Игрок {1}{2}{default} отключился. Причина: \"{3}\""
-	}
+    "PLAYER_DISCONNECTED_WITH_REASON"
+    {
+        "#format"		"{1:s},{2:s},{3:s}"
+        "ru"			"Игрок {1}{2}{default} отключился. Причина: \"{3}\""
+    }
 
-	"LAN"
-	{
-		"ru"			"Local"
-	}
+    "PLAYER_CONNECTION_LOST"
+    {
+        "#format"		"{1:s},{2:s}"
+        "ru"			"Игрок {1}{2} {green}потерял соединение"
+    }
 
-	"UNKNOWN_COUNTRY"
-	{
-		"ru"			"Unknown"
-	}
+    "PLAYER_CONNECTION_RESTORE"
+    {
+        "#format"		"{1:s},{2:s}"
+        "ru"			"Игрок {1}{2} {green}восстановил соединение"
+    }
 
-	"ONLY_COUNTRY"
-	{
-		"#format"		"{1:s}"
-		"ru"			"{1}"
-	}
+    "LAN"
+    {
+        "ru"			"Local"
+    }
 
-	"COUNTRY_AND_CITY"
-	{
-		"#format"		"{1:s},{2:s}"
-		"ru"			"{1}, {2}"
-	}
+    "UNKNOWN_COUNTRY"
+    {
+        "ru"			"Unknown"
+    }
+
+    "ONLY_COUNTRY"
+    {
+        "#format"		"{1:s}"
+        "ru"			"{1}"
+    }
+
+    "COUNTRY_AND_CITY"
+    {
+        "#format"		"{1:s},{2:s}"
+        "ru"			"{1}, {2}"
+    }
 }

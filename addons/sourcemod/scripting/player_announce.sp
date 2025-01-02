@@ -10,8 +10,8 @@
 public Plugin myinfo = {
     name        = "PlayerAnnounce",
     author      = "TouchMe",
-    description = "Displays information about connecting/disconnecting players",
-    version     = "build_0004",
+    description = "Displays information about connecting/disconnecting players and lost/resotre connection",
+    version     = "build_0005",
     url         = "https://github.com/TouchMe-Inc/l4d2_player_announce"
 };
 
@@ -19,6 +19,9 @@ public Plugin myinfo = {
 #define TRANSLATIONS            "player_announce.phrases"
 #define APP_L4D2                550
 
+#define MAX_SHOTR_NAME_LENGTH   18
+
+bool g_bClientLostConnection[MAXPLAYERS + 1] = {false, ...};
 
 static const char g_szTeamColor[][] = {
     "{olive}",
@@ -26,7 +29,6 @@ static const char g_szTeamColor[][] = {
     "{blue}",
     "{red}"
 };
-
 
 /**
   * Called before OnPluginStart.
@@ -48,6 +50,42 @@ public void OnPluginStart()
 
     HookEvent("player_disconnect", Event_PlayerDisconnect, EventHookMode_Pre);
     HookEvent("player_team", Event_PlayerTeam, EventHookMode_Post);
+
+    CreateTimer(0.5, Timer_CheckTimingOut, .flags = TIMER_REPEAT);
+}
+
+Action Timer_CheckTimingOut(Handle hTimer)
+{
+    static char sClientName[MAX_NAME_LENGTH];
+
+    for (int iClient = 1; iClient <= MaxClients; iClient++)
+    {
+        if (!IsClientInGame(iClient) || IsFakeClient(iClient)) {
+            continue;
+        }
+
+        int iClientTeam = GetClientTeam(iClient);
+
+        if (!iClientTeam) {
+            continue;
+        }
+
+        if (g_bClientLostConnection[iClient] && !IsClientTimingOut(iClient))
+        {
+            GetClientNameFixed(iClient, sClientName, sizeof(sClientName), MAX_SHOTR_NAME_LENGTH);
+            CPrintToChatAll("%t", "PLAYER_CONNECTION_RESTORE", g_szTeamColor[iClientTeam], sClientName);
+            g_bClientLostConnection[iClient] = false;
+        }
+
+        else if (!g_bClientLostConnection[iClient] && IsClientTimingOut(iClient))
+        {
+            GetClientNameFixed(iClient, sClientName, sizeof(sClientName), MAX_SHOTR_NAME_LENGTH);
+            CPrintToChatAll("%t", "PLAYER_CONNECTION_LOST", g_szTeamColor[iClientTeam], sClientName);
+            g_bClientLostConnection[iClient] = true;
+        }
+    }
+    
+    return Plugin_Continue;
 }
 
 public void OnClientAuthorized(int iClient, const char[] sAuthId)
@@ -65,11 +103,13 @@ public void OnClientConnected(int iClient)
         return;
     }
 
-    char sName[MAX_NAME_LENGTH];
+    char sClientName[MAX_NAME_LENGTH];
 
-    GetClientNameFixed(iClient, sName, sizeof(sName), 18);
+    GetClientNameFixed(iClient, sClientName, sizeof(sClientName), MAX_SHOTR_NAME_LENGTH);
 
-    CPrintToChatAll("%t", "PLAYER_CONNECTING", sName);
+    CPrintToChatAll("%t", "PLAYER_CONNECTING", sClientName);
+
+    g_bClientLostConnection[iClient] = false;
 }
 
 public void Event_PlayerTeam(Event event, const char[] sEventName, bool bDontBroadcast)
@@ -95,10 +135,10 @@ Action Timer_ClientInGame(Handle hTimer, int iClientId)
         return Plugin_Stop;
     }
 
-    int iTeam = GetClientTeam(iClient);
+    int iClientTeam = GetClientTeam(iClient);
 
-    char sName[MAX_NAME_LENGTH];
-    GetClientNameFixed(iClient, sName, sizeof(sName), 18);
+    char sClientName[MAX_NAME_LENGTH];
+    GetClientNameFixed(iClient, sClientName, sizeof(sClientName), MAX_SHOTR_NAME_LENGTH);
 
     char sIp[16];
     GetClientIP(iClient, sIp, sizeof(sIp));
@@ -126,7 +166,7 @@ Action Timer_ClientInGame(Handle hTimer, int iClientId)
         FormatEx(szGeoData, sizeof(szGeoData), "%T", "LAN", LANG_SERVER);
     }
 
-    CPrintToChatAll("%t", "PLAYER_CONNECTED", g_szTeamColor[iTeam], sName, szGeoData, GetClientHours(iClient));
+    CPrintToChatAll("%t", "PLAYER_CONNECTED", g_szTeamColor[iClientTeam], sClientName, szGeoData, GetClientHours(iClient));
 
     return Plugin_Stop;
 }
@@ -141,19 +181,21 @@ void Event_PlayerDisconnect(Event event, const char[] sEventName, bool bDontBroa
 
     SetEventBroadcast(event, true);
 
-    int iTeam = IsClientInGame(iClient) ? GetClientTeam(iClient) : 0;
+    int iClientTeam = IsClientInGame(iClient) ? GetClientTeam(iClient) : 0;
 
     char szClientName[MAX_NAME_LENGTH];
-    GetClientNameFixed(iClient, szClientName, sizeof(szClientName), 18);
+    GetClientNameFixed(iClient, szClientName, sizeof(szClientName), MAX_SHOTR_NAME_LENGTH);
 
     char szReason[128];
     GetEventString(event, "reason", szReason, sizeof(szReason));
 
     if (strcmp(szReason, "Disconnect by user.") == 0) {
-        CPrintToChatAll("%t", "PLAYER_DISCONNECTED", g_szTeamColor[iTeam], szClientName);
+        CPrintToChatAll("%t", "PLAYER_DISCONNECTED", g_szTeamColor[iClientTeam], szClientName);
     } else {
-        CPrintToChatAll("%t", "PLAYER_DISCONNECTED_WITH_REASON", g_szTeamColor[iTeam], szClientName, szReason);
+        CPrintToChatAll("%t", "PLAYER_DISCONNECTED_WITH_REASON", g_szTeamColor[iClientTeam], szClientName, szReason);
     }
+
+    g_bClientLostConnection[iClient] = false;
 }
 
 bool IsLanIP(char ip[16])

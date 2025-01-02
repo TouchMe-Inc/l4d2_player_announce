@@ -1,48 +1,60 @@
 "Phrases"
 {
-	"PLAYER_CONNECTING"
-	{
-		"#format"		"{1:s}"
-		"en"			"Player {olive}{1}{default} connecting"
-	}
+    "PLAYER_CONNECTING"
+    {
+        "#format"		"{1:s}"
+        "en"			"Player {olive}{1}{default} connecting"
+    }
 
-	"PLAYER_CONNECTED"
-	{
-		"#format"		"{1:s}{2:s},{3:s},{4:d}"
-		"en"			"Player {1}{2}{default} connected {olive}·{default} {3} {olive}·{default} Hours: {4}"
-	}
+    "PLAYER_CONNECTED"
+    {
+        "#format"		"{1:s}{2:s},{3:s},{4:d}"
+        "en"			"Player {1}{2}{default} connected {olive}·{default} {3} {olive}·{default} Hours: {4}"
+    }
 
-	"PLAYER_DISCONNECTED"
-	{
-		"#format"		"{1:s},{2:s}"
-		"en"			"Player {1}{2}{default} disconnected"
-	}
+    "PLAYER_DISCONNECTED"
+    {
+        "#format"		"{1:s},{2:s}"
+        "en"			"Player {1}{2}{default} disconnected"
+    }
 
-	"PLAYER_DISCONNECTED_WITH_REASON"
-	{
-		"#format"		"{1:s},{2:s},{3:s}"
-		"en"			"Player {1}{2}{default} disconnected. Reason: \"{3}\""
-	}
+    "PLAYER_DISCONNECTED_WITH_REASON"
+    {
+        "#format"		"{1:s},{2:s},{3:s}"
+        "en"			"Player {1}{2}{default} disconnected. Reason: \"{3}\""
+    }
 
-	"LAN"
-	{
-		"en"			"Local"
-	}
+    "PLAYER_CONNECTION_LOST"
+    {
+        "#format"		"{1:s},{2:s}"
+        "en"			"Player {1}{2}{default} has {green}lost connection"
+    }
 
-	"UNKNOWN_COUNTRY"
-	{
-		"en"			"Unknown"
-	}
+    "PLAYER_CONNECTION_RESTORE"
+    {
+        "#format"		"{1:s},{2:s}"
+        "en"			"Player {1}{2}{default} has {green}restored connection"
+    }
 
-	"ONLY_COUNTRY"
-	{
-		"#format"		"{1:s}"
-		"en"			"{1}"
-	}
+    "LAN"
+    {
+        "en"			"Local"
+    }
 
-	"COUNTRY_AND_CITY"
-	{
-		"#format"		"{1:s},{2:s}"
-		"en"			"{1}, {2}"
-	}
+    "UNKNOWN_COUNTRY"
+    {
+        "en"			"Unknown"
+    }
+
+    "ONLY_COUNTRY"
+    {
+        "#format"		"{1:s}"
+        "en"			"{1}"
+    }
+
+    "COUNTRY_AND_CITY"
+    {
+        "#format"		"{1:s},{2:s}"
+        "en"			"{1}, {2}"
+    }
 }
