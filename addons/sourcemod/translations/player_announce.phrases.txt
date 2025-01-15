@@ -27,13 +27,13 @@
     "PLAYER_CONNECTION_LOST"
     {
         "#format"		"{1:s},{2:s}"
-        "en"			"Player {1}{2}{default} has {green}lost connection"
+        "en"			"Player {1}{2}{default} has {green}lost{default} connection to the server"
     }
 
     "PLAYER_CONNECTION_RESTORE"
     {
         "#format"		"{1:s},{2:s}"
-        "en"			"Player {1}{2}{default} has {green}restored connection"
+        "en"			"Player {1}{2}{default} has {green}restored{default} connection to the server"
     }
 
     "LAN"
