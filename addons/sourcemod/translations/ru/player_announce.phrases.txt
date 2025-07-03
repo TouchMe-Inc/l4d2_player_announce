@@ -8,7 +8,7 @@
 
     "PLAYER_CONNECTED"
     {
-        "#format"		"{1:s}{2:s},{3:s},{4:d}"
+        "#format"		"{1:s},{2:s},{3:s},{4:d}"
         "ru"			"Игрок {1}{2}{default} подключился {olive}·{default} {3} {olive}·{default} Часов: {4}"
     }
 

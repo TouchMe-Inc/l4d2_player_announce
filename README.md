@@ -5,4 +5,4 @@ Displays information about connecting/disconnecting players and lost/resotre con
 
 ## Require
 * Colors
-* [SteamWorks](https://github.com/hexa-core-eu/SteamWorks)
+* [SteamWorks](https://github.com/TouchMe-Inc/SteamWorks)
