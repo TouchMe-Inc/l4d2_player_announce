@@ -11,7 +11,7 @@ public Plugin myinfo = {
     name        = "PlayerAnnounce",
     author      = "TouchMe",
     description = "Displays information about connecting/disconnecting players and lost/resotre connection",
-    version     = "build_0005",
+    version     = "build_0006",
     url         = "https://github.com/TouchMe-Inc/l4d2_player_announce"
 };
 
@@ -88,20 +88,13 @@ Action Timer_CheckTimingOut(Handle hTimer)
     return Plugin_Continue;
 }
 
-public void OnClientAuthorized(int iClient, const char[] sAuthId)
-{
-    if (sAuthId[0] == 'B' || sAuthId[9] == 'L') {
-        return;
-    }
-
-    SteamWorks_RequestStats(iClient, APP_L4D2);
-}
-
 public void OnClientConnected(int iClient)
 {
     if (IsFakeClient(iClient)) {
         return;
     }
+
+    SteamWorks_RequestStats(iClient, APP_L4D2);
 
     char sClientName[MAX_NAME_LENGTH];
 
@@ -206,7 +199,7 @@ bool IsLanIP(char ip[16])
     {
         int ipnum = StringToInt(ip4[0]) * 65536 + StringToInt(ip4[1]) * 256 + StringToInt(ip4[2]);
 
-        if((ipnum >= 655360 && ipnum < 655360+65535)
+        if ((ipnum >= 655360 && ipnum < 655360+65535)
         || (ipnum >= 11276288 && ipnum < 11276288+4095)
         || (ipnum >= 12625920 && ipnum < 12625920+255))
         {
@@ -232,15 +225,27 @@ int GetClientHours(int iClient)
 }
 
 /**
+ * Retrieves a player's name and safely truncates it if necessary.
  *
+ * Copies the client's name into the specified buffer. If the name exceeds
+ * the given maximum display size (iMaxSize), it is truncated and replaced
+ * with an ellipsis ("...") at the end.
+ *
+ * This is useful for ensuring that player names fit within UI or HUD
+ * constraints while preserving readability.
+ *
+ * @param iClient     Client index.
+ * @param szName      Destination buffer to store the player's name.
+ * @param iLength      Maximum size of the destination buffer.
+ * @param iMaxSize    Maximum allowed length for display (excluding null terminator).
  */
-void GetClientNameFixed(int iClient, char[] name, int length, int iMaxSize)
+void GetClientNameFixed(int iClient, char[] szName, int iLength, int iMaxSize)
 {
-    GetClientName(iClient, name, length);
+    GetClientName(iClient, szName, iLength);
 
-    if (strlen(name) > iMaxSize)
+    if (strlen(szName) > iMaxSize)
     {
-        name[iMaxSize - 3] = name[iMaxSize - 2] = name[iMaxSize - 1] = '.';
-        name[iMaxSize] = '\0';
+        szName[iMaxSize - 3] = szName[iMaxSize - 2] = szName[iMaxSize - 1] = '.';
+        szName[iMaxSize] = '\0';
     }
 }
