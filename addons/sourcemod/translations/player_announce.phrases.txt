@@ -3,13 +3,19 @@
     "PLAYER_CONNECTING"
     {
         "#format"		"{1:s}"
-        "en"			"Player {olive}{1}{default} connecting"
+        "en"			"Player {lightgreen}{1}{default} connecting"
     }
 
     "PLAYER_CONNECTED"
     {
         "#format"		"{1:s},{2:s},{3:s},{4:d}"
         "en"			"Player {1}{2}{default} connected {olive}·{default} {3} {olive}·{default} Hours: {4}"
+    }
+
+    "PLAYER_CONNECTED_INPAUSE"
+    {
+        "#format"		"{1:s}"
+        "en"			"Player {olive}{1}{default} connected"
     }
 
     "PLAYER_DISCONNECTED"

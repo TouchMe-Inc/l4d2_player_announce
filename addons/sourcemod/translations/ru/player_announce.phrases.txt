@@ -3,13 +3,19 @@
     "PLAYER_CONNECTING"
     {
         "#format"		"{1:s}"
-        "ru"			"Игрок {olive}{1}{default} подключается"
+        "ru"			"Игрок {lightgreen}{1}{default} подключается"
     }
 
     "PLAYER_CONNECTED"
     {
         "#format"		"{1:s},{2:s},{3:s},{4:d}"
         "ru"			"Игрок {1}{2}{default} подключился {olive}·{default} {3} {olive}·{default} Часов: {4}"
+    }
+
+    "PLAYER_CONNECTED_INPAUSE"
+    {
+        "#format"		"{1:s}"
+        "ru"			"Игрок {olive}{1}{default} подключился"
     }
 
     "PLAYER_DISCONNECTED"
