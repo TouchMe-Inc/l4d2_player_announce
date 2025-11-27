@@ -12,7 +12,7 @@ public Plugin myinfo = {
     name        = "PlayerAnnounce",
     author      = "TouchMe",
     description = "Displays information about connecting/disconnecting players and lost/resotre connection",
-    version     = "build_0008",
+    version     = "build_0009",
     url         = "https://github.com/TouchMe-Inc/l4d2_player_announce"
 };
 
@@ -27,17 +27,28 @@ public Plugin myinfo = {
  */
 #define APP_L4D2                550
 
+/*
+ * String size.
+ */
 #define MAX_SHOTR_NAME_LENGTH   21
 #define MAX_IP_LENGTH           16
 
+/*
+ * Teams.
+ */
 #define TEAM_SPECTATOR          1
+
+
+ConVar g_cvPausable = null;
+
+bool g_bPaused = false;
 
 int g_iResourceEntity = -1;
 
 bool g_bClientLostConnection[MAXPLAYERS + 1] = {false, ...};
 bool g_bClientPrint[MAXPLAYERS + 1] = {false, ...};
 
-static const char g_szTeamColor[][] = {
+char g_szTeamColor[][] = {
     "{lightgreen}",
     "{olive}",
     "{blue}",
@@ -62,8 +73,12 @@ public void OnPluginStart()
 {
     LoadTranslations(TRANSLATIONS);
 
+    g_cvPausable = FindConVar("sv_pausable");
+
     HookEvent("player_disconnect", Event_PlayerDisconnect, EventHookMode_Pre);
     HookEvent("player_team", Event_PlayerTeam, EventHookMode_Post);
+
+    AddCommandListener(Command_Pause, "pause");
 
     CreateTimer(0.5, Timer_CheckTimingOut, .flags = TIMER_REPEAT);
 }
@@ -71,8 +86,10 @@ public void OnPluginStart()
 /**
  * Finding Resource Entity.
  */
-public void OnMapStart() {
-	g_iResourceEntity = GetResourceEntity();
+public void OnMapStart()
+{
+    g_iResourceEntity = GetResourceEntity();
+    g_bPaused = false;
 }
 
 Action Timer_CheckTimingOut(Handle hTimer)
@@ -124,6 +141,26 @@ public void OnClientConnected(int iClient)
     GetClientNameFixed(iClient, szClientName, sizeof(szClientName), MAX_SHOTR_NAME_LENGTH);
 
     CPrintToChatAll("%t", "PLAYER_CONNECTING", szClientName);
+}
+
+public void OnClientPutInServer(int iClient)
+{
+    if (!g_bPaused) {
+        return;
+    }
+
+    if (IsFakeClient(iClient)) {
+        return;
+    }
+
+    char szClientName[MAX_NAME_LENGTH];
+    GetClientNameFixed(iClient, szClientName, sizeof(szClientName), MAX_SHOTR_NAME_LENGTH);
+
+    CPrintToChatAll("%t", "PLAYER_CONNECTED_INPAUSE", szClientName);
+
+    ChangeClientTeam(iClient, TEAM_SPECTATOR);
+
+    g_bClientPrint[iClient] = true;
 }
 
 public void Event_PlayerTeam(Event event, const char[] sEventName, bool bDontBroadcast)
@@ -212,6 +249,15 @@ void Event_PlayerDisconnect(Event event, const char[] sEventName, bool bDontBroa
     }
 
     g_bClientLostConnection[iClient] = false;
+}
+
+public Action Command_Pause(int client, const char[] command, int argc)
+{
+    if (GetConVarBool(g_cvPausable)) {
+        g_bPaused = !g_bPaused;
+    }
+
+    return Plugin_Continue;
 }
 
 bool IsLanIP(const char ip[16])
