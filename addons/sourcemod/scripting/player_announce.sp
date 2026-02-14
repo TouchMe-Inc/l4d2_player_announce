@@ -12,7 +12,7 @@ public Plugin myinfo = {
     name        = "PlayerAnnounce",
     author      = "TouchMe",
     description = "Displays information about connecting/disconnecting players and lost/resotre connection",
-    version     = "build_0009",
+    version     = "build_0010",
     url         = "https://github.com/TouchMe-Inc/l4d2_player_announce"
 };
 
@@ -37,6 +37,9 @@ public Plugin myinfo = {
  * Teams.
  */
 #define TEAM_SPECTATOR          1
+
+
+#define DISCONNECT_BY_USER      "Disconnect by user."
 
 
 ConVar g_cvPausable = null;
@@ -122,7 +125,7 @@ Action Timer_CheckTimingOut(Handle hTimer)
             g_bClientLostConnection[iClient] = true;
         }
     }
-    
+
     return Plugin_Continue;
 }
 
@@ -131,8 +134,6 @@ public void OnClientConnected(int iClient)
     if (IsFakeClient(iClient)) {
         return;
     }
-
-    SteamWorks_RequestStats(iClient, APP_L4D2);
 
     g_bClientLostConnection[iClient] = false;
     g_bClientPrint[iClient] = false;
@@ -145,11 +146,13 @@ public void OnClientConnected(int iClient)
 
 public void OnClientPutInServer(int iClient)
 {
-    if (!g_bPaused) {
+    if (IsFakeClient(iClient)) {
         return;
     }
 
-    if (IsFakeClient(iClient)) {
+    SteamWorks_RequestStats(iClient, APP_L4D2);
+
+    if (!g_bPaused) {
         return;
     }
 
@@ -163,7 +166,7 @@ public void OnClientPutInServer(int iClient)
     g_bClientPrint[iClient] = true;
 }
 
-public void Event_PlayerTeam(Event event, const char[] sEventName, bool bDontBroadcast)
+void Event_PlayerTeam(Event event, const char[] sEventName, bool bDontBroadcast)
 {
     if (GetEventInt(event, "disconnect")) {
         return;
@@ -242,7 +245,7 @@ void Event_PlayerDisconnect(Event event, const char[] sEventName, bool bDontBroa
     char szReason[192];
     GetEventString(event, "reason", szReason, sizeof szReason);
 
-    if (strcmp(szReason, "Disconnect by user.") == 0) {
+    if (strcmp(szReason, DISCONNECT_BY_USER) == 0) {
         CPrintToChatAll("%t", "PLAYER_DISCONNECTED", g_szTeamColor[iClientTeam], szClientName);
     } else {
         CPrintToChatAll("%t", "PLAYER_DISCONNECTED_WITH_REASON", g_szTeamColor[iClientTeam], szClientName, szReason);
@@ -258,24 +261,6 @@ public Action Command_Pause(int client, const char[] command, int argc)
     }
 
     return Plugin_Continue;
-}
-
-bool IsLanIP(const char ip[16])
-{
-    char ip4[4][4];
-    if (ExplodeString(ip, ".", ip4, sizeof ip4, sizeof ip4[]) != 4) {
-        return false;
-    }
-
-    int a = StringToInt(ip4[0]);
-    int b = StringToInt(ip4[1]);
-
-    if ((a == 10)
-     || (a == 172 && b >= 16 && b <= 31)
-     || (a == 192 && b == 168))
-        return true;
-
-    return false;
 }
 
 /**
@@ -318,13 +303,31 @@ void GetClientNameFixed(int iClient, char[] szName, int iLength, int iMaxSize)
     }
 }
 
+bool IsLanIP(const char ip[16])
+{
+    char ip4[4][4];
+    if (ExplodeString(ip, ".", ip4, sizeof ip4, sizeof ip4[]) != 4) {
+        return false;
+    }
+
+    int a = StringToInt(ip4[0]);
+    int b = StringToInt(ip4[1]);
+
+    if ((a == 10)
+     || (a == 172 && b >= 16 && b <= 31)
+     || (a == 192 && b == 168))
+        return true;
+
+    return false;
+}
+
 /**
  * Get player's previous team.
  */
 int GetClientLastTeam(int iClient) {
-	return GetEntProp(g_iResourceEntity, Prop_Send, "m_iTeam", .element = iClient);
+    return GetEntProp(g_iResourceEntity, Prop_Send, "m_iTeam", .element = iClient);
 }
 
 int GetResourceEntity() {
-	return FindEntityByClassname(-1, "terror_player_manager");
+    return FindEntityByClassname(-1, "terror_player_manager");
 }
